@@ -1,23 +1,13 @@
 #!/usr/bin/env bash
-
-set -e
-# set -x
-
-
+module purge
 
 # load RStudio Server
-# This will cause an error on the chorus partition, 
-# apptainer is an OS module there, so we only do this on gizmo.
-if [[ $HOSTNAME == gizmo* ]] ;
-then
-  source /app/lmod/lmod/init/profile
-  module purge
-  module load Apptainer
-  module list
-fi
+module load <%= context.rserver %>
 
+# TODO - add to library path if user has chosen a seurat module
 
-
+# load R
+# module load <^= context.Rapp %>
 
 #
 # Start RStudio Server
@@ -63,49 +53,20 @@ cd "${HOME}"
 # Create a unique $TMPDIR for runtime files
 #export TMPDIR="$(mktemp -d)"
 
+# Output debug info
+module list
 
 # Launch the RStudio Server
 echo "Starting up rserver..."
-
-# this does not work for some reason:
-# export MYTEMP=/loc/scratch/${SLURM_JOB_ID}/$(date +%s)
-# but this does, hope it's not a problem:
-export MYTEMP=/tmp/${SLURM_JOB_ID}/$(date +%s)
-
-
-# we can't use $(pwd) because rstudio complains that the directory path
-# is too long
-
-mkdir -p $MYTEMP
-mkdir -p $MYTEMP/rstudio-server
-
-
-apptainer version
-
-# There is no `rsession` executable in the apptainer image so we take
-# this out of the rserver flags:
-#   --rsession-path "${RSESSION_WRAPPER_FILE}" \
-
-
-apptainer exec \
-  --scratch /run,/var/lib/rstudio-server \
-  --bind /fh/fast:/fh/fast \
-  --bind /hpc/temp:/hpc/temp \
-  --bind /fh/working:/fh/working \
-  --bind /fh/secure:/fh/secure \
-  --bind /tmp:/tmp \
-  --bind /loc:/loc \
-  --workdir $(mktemp -d) \
-  <%= context.rserver %> \
-  rserver \
+set -x
+rserver \
   --www-port ${port} \
-  --www-address=0.0.0.0 \
   --auth-none 0 \
   --auth-pam-helper-path "${RSTUDIO_AUTH}" \
   --auth-encrypt-password 0 \
-  --server-data-dir "${MYTEMP}" \
-  --secure-cookie-key-file "${MYTEMP}/rstudio-server/secure-cookie-key" \
+  --rsession-path "${RSESSION_WRAPPER_FILE}" \
+  --server-data-dir "${TMPDIR}" \
+  --secure-cookie-key-file "${TMPDIR}/rstudio-server/secure-cookie-key" \
   --database-config-file "${DBCONF}" \
   --server-user $(whoami)
 
-echo will we ever see this
