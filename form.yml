@@ -47,9 +47,9 @@ attributes:
       # TODO: Seurat versions require special handling. (additional library paths)
       # Also, note the `seurat-` prefix; if we leave that off we have duplicate values
       # and the first seurat version is selected by default which we don't want.
-      # - [ "Seurat/5.0.1-foss-2022b-R-4.3.1", "seurat-RStudio-Server/2023.12.1+402-foss-2022b-Java-11-R-4.3.1"]
-      # - [ "Seurat/5.1.0-foss-2023b-R-4.4.0", "seurat-RStudio-Server/2024.04.1+748-foss-2023b-Java-11-R-4.4.0"]
-      # - [ "fhSeurat/4.1.1-foss-2021b-R-4.2.0", "seurat-RStudio-Server/2021.09.3-396-foss-2021b-Java-11-R-4.2.0"]
+      - [ "Seurat/5.0.1-foss-2022b-R-4.3.1", "seurat-RStudio-Server/2023.12.1+402-foss-2022b-Java-11-R-4.3.1"]
+      - [ "Seurat/5.1.0-foss-2023b-R-4.4.0", "seurat-RStudio-Server/2024.04.1+748-foss-2023b-Java-11-R-4.4.0"]
+      - [ "fhSeurat/4.1.1-foss-2021b-R-4.2.0", "seurat-RStudio-Server/2021.09.3-396-foss-2021b-Java-11-R-4.2.0"]
 
   # R is part of the fhR modules - it has its own R, so we don't want to specify it here.
   # Though I think R-4.0.2 requires R be loaded explicitly, let's deal with that later, or

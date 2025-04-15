@@ -1,12 +1,81 @@
 #!/usr/bin/env bash
 module purge
 
+  <% 
+  rserver = context.rserver
+  user = ENV['USER']
+  want_seurat = false
+  extra_libs  = ""
+  extra_libs = case rserver
+  when "RStudio-Server/2024.04.1+748-foss-2023b-Java-11-R-4.4.0" # fhR/4.4.0-foss-2023b
+    [
+      "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.4",
+      "/app/software/fhR/4.4.0-foss-2023b",
+      "/app/software/R-Tidyverse/4.4.0-gfbf-2023b",
+      "/app/software/R/4.4.0-gfbf-2023b/lib/R/library"
+    ].join(":")
+  when "RStudio-Server/2023.12.1+402-foss-2022b-Java-11-R-4.3.1" # fhR/4.3.1-foss-2022b
+    # TODO everything below here
+    [
+      "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.3",
+      "/app/software/fhR/4.3.1-foss-2022b",
+      "/app/software/R-Tidyverse/4.3.1-gfbf-2022b",
+      "/app/software/R/4.3.1-gfbf-2022b/lib/R/library"  
+    ].join(":")
+  when "RStudio-Server/1.4.1717-foss-2021b-Java-11-R-4.1.2" # fhR/4.1.2-foss-2021b
+    [
+      "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.1",
+      "/app/software/fhR/4.1.2-foss-2021b",
+      "/app/software/R/4.1.2-foss-2021b/lib/R/library"  
+    ].join(":")
+  when "RStudio-Server/2021.09.3-396-foss-2021b-Java-11-R-4.2.0" # fhR/4.2.0-foss-2021b
+    [
+      "/app/software/fhR/4.2.0-foss-2021b",
+      "/app/software/R/4.2.0-foss-2021b/lib/R/library",
+      "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.2"
+    ].join(":")
+  when "rstudio-server/1.2.5033-foss-2019b" # fhR/4.0.2-foss-2019b
+    [
+      "/app/software/fhR/4.0.2-foss-2019b",
+      "/app/software/R/4.0.2-foss-2019b/lib/R/library",
+      "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.0"
+    ].join(":")
+  when "seurat-RStudio-Server/2023.12.1+402-foss-2022b-Java-11-R-4.3.1" # fhR/4.3.1-foss-2022b
+    [
+      "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.3",
+      "/app/software/Seurat/5.0.1-foss-2022b-R-4.3.1",
+      "/app/software/fhR/4.3.1-foss-2022b",
+      "/app/software/R-Tidyverse/4.3.1-gfbf-2022b",
+      "/app/software/R/4.3.1-gfbf-2022b/lib/R/library"  
+    ].join(":")
+  when "seurat-RStudio-Server/2024.04.1+748-foss-2023b-Java-11-R-4.4.0" # fhR/4.4.0-foss-2023b
+    [
+      "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.4",
+      "/app/software/Seurat/5.1.0-foss-2023b-R-4.4.0",
+      "/app/software/fhR/4.4.0-foss-2023b",
+      "/app/software/R-Tidyverse/4.4.0-gfbf-2023b",
+      "/app/software/R/4.4.0-gfbf-2023b/lib/R/library"  
+    ].join(":")
+  when "seurat-RStudio-Server/2021.09.3-396-foss-2021b-Java-11-R-4.2.0" # fhR/4.2.0-foss-2021b
+    [
+      "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.2",
+      "/app/software/fhR/4.2.0-foss-2021b",
+      "/app/software/R/4.2.0-foss-2021b/lib/R/library",
+      "/app/software/fhSeurat/4.1.1-foss-2021b-R-4.2.0" 
+    ].join(":")
+  else
+    ""
+  end
+  rserver = rserver.sub("seurat-", "")
+
+  %>
+
+  
 # load RStudio Server
-module load <%= context.rserver %>
+module load <%= rserver %>
 
-# TODO - add to library path if user has chosen a seurat module
 
-# load R
+# load R - no need to do this; RStudio modules have their own R.
 # module load <^= context.Rapp %>
 
 #
@@ -30,7 +99,8 @@ sed 's/^ \{2\}//' > "${RSESSION_WRAPPER_FILE}" << EOL
   # Launch the original command
   echo "Launching rsession..."
   set -x
-  exec rsession --r-libs-user "${R_LIBS_USER}" "\${@}"
+  #export R_LIBS_USER="<%= extra_libs %>"
+  exec rsession --r-libs-user "<%= extra_libs %>" "\${@}"
 EOL
 )
 chmod 700 "${RSESSION_WRAPPER_FILE}"
