@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 module purge
 
-  <% 
+  <%
   rserver = context.rserver
   user = ENV['USER']
   want_seurat = false
@@ -20,13 +20,13 @@ module purge
       "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.3",
       "/app/software/fhR/4.3.1-foss-2022b",
       "/app/software/R-Tidyverse/4.3.1-gfbf-2022b",
-      "/app/software/R/4.3.1-gfbf-2022b/lib/R/library"  
+      "/app/software/R/4.3.1-gfbf-2022b/lib/R/library"
     ].join(":")
   when "RStudio-Server/1.4.1717-foss-2021b-Java-11-R-4.1.2" # fhR/4.1.2-foss-2021b
     [
       "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.1",
       "/app/software/fhR/4.1.2-foss-2021b",
-      "/app/software/R/4.1.2-foss-2021b/lib/R/library"  
+      "/app/software/R/4.1.2-foss-2021b/lib/R/library"
     ].join(":")
   when "RStudio-Server/2021.09.3-396-foss-2021b-Java-11-R-4.2.0" # fhR/4.2.0-foss-2021b
     [
@@ -46,7 +46,7 @@ module purge
       "/app/software/Seurat/5.0.1-foss-2022b-R-4.3.1",
       "/app/software/fhR/4.3.1-foss-2022b",
       "/app/software/R-Tidyverse/4.3.1-gfbf-2022b",
-      "/app/software/R/4.3.1-gfbf-2022b/lib/R/library"  
+      "/app/software/R/4.3.1-gfbf-2022b/lib/R/library"
     ].join(":")
   when "seurat-RStudio-Server/2024.04.1+748-foss-2023b-Java-11-R-4.4.0" # fhR/4.4.0-foss-2023b
     [
@@ -54,14 +54,14 @@ module purge
       "/app/software/Seurat/5.1.0-foss-2023b-R-4.4.0",
       "/app/software/fhR/4.4.0-foss-2023b",
       "/app/software/R-Tidyverse/4.4.0-gfbf-2023b",
-      "/app/software/R/4.4.0-gfbf-2023b/lib/R/library"  
+      "/app/software/R/4.4.0-gfbf-2023b/lib/R/library"
     ].join(":")
   when "seurat-RStudio-Server/2021.09.3-396-foss-2021b-Java-11-R-4.2.0" # fhR/4.2.0-foss-2021b
     [
       "/home/#{user}/R/x86_64-pc-linux-gnu-library/4.2",
       "/app/software/fhR/4.2.0-foss-2021b",
       "/app/software/R/4.2.0-foss-2021b/lib/R/library",
-      "/app/software/fhSeurat/4.1.1-foss-2021b-R-4.2.0" 
+      "/app/software/fhSeurat/4.1.1-foss-2021b-R-4.2.0"
     ].join(":")
   else
     ""
@@ -70,7 +70,7 @@ module purge
 
   %>
 
-  
+
 # load RStudio Server
 module load <%= rserver %>
 
@@ -94,6 +94,7 @@ sed 's/^ \{2\}//' > "${RSESSION_WRAPPER_FILE}" << EOL
 
   # Log all output from this script
   export RSESSION_LOG_FILE="${PWD}/rsession.log"
+  export TAR="/bin/tar"
   exec &>>"\${RSESSION_LOG_FILE}"
 
   # Launch the original command
@@ -139,4 +140,3 @@ rserver \
   --secure-cookie-key-file "${TMPDIR}/rstudio-server/secure-cookie-key" \
   --database-config-file "${DBCONF}" \
   --server-user $(whoami)
-
