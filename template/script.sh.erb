@@ -67,6 +67,11 @@ module purge
     ""
   end
   rserver = rserver.sub("seurat-", "")
+  if rserver == "rstudio/1.3.1093-foss-2019b-Java-11-R-4.0.2"
+    db_config_flag = ' '
+  else
+    db_config_flag = '--database-config-file "${DBCONF}" '
+  end
 
   %>
 
@@ -138,5 +143,4 @@ rserver \
   --rsession-path "${RSESSION_WRAPPER_FILE}" \
   --server-data-dir "${TMPDIR}" \
   --secure-cookie-key-file "${TMPDIR}/rstudio-server/secure-cookie-key" \
-  --database-config-file "${DBCONF}" \
-  --server-user $(whoami)
+  --server-user $(whoami) <%= db_config_flag %>
