@@ -136,6 +136,7 @@ module list
 echo "Starting up rserver..."
 set -x
 rserver \
+  --auth-timeout-minutes 10080 \
   --www-port ${port} \
   --auth-none 0 \
   --auth-pam-helper-path "${RSTUDIO_AUTH}" \
