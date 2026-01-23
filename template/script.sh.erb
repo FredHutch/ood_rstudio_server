@@ -124,11 +124,17 @@ EOL
 )
 chmod 700 "${DBCONF}"
 
+
+echo "session-timeout-minutes=0" > ${PWD}/rsession.conf
+
+export OLDWD=${PWD}
+
 # Set working directory to home directory
 cd "${HOME}"
 
 # Create a unique $TMPDIR for runtime files
 #export TMPDIR="$(mktemp -d)"
+
 
 # Output debug info
 module list
@@ -137,6 +143,7 @@ module list
 echo "Starting up rserver..."
 set -x
 rserver \
+  --rsession-config-file ${OLDWD}/rsession.conf \
   --auth-timeout-minutes 10080 \
   --www-port ${port} \
   --auth-none 0 \
